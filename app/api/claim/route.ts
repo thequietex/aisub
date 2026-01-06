@@ -139,7 +139,6 @@ export async function POST(request: NextRequest) {
       .update({
         status: 'claimed',
         winner_wallet: walletAddress,
-        claimed_at: new Date().toISOString(),
       })
       .eq('id', bountyId)
       .eq('status', 'open') // Critical: only update if still open
@@ -161,8 +160,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 7: Transfer USDC to winner
-    const transferResult = await transferUSDC(walletAddress, bounty.amount);
+    // Step 7: Extract amount from reward_text (e.g., "$20 USDC - Claude Pro")
+    const amountMatch = bounty.reward_text.match(/\$(\d+)/);
+    const amount = amountMatch ? parseFloat(amountMatch[1]) : 20; // Default to 20 if parsing fails
+
+    // Step 8: Transfer USDC to winner
+    const transferResult = await transferUSDC(walletAddress, amount);
 
     if (!transferResult.success) {
       // Rollback the claim if transfer fails
@@ -171,7 +174,6 @@ export async function POST(request: NextRequest) {
         .update({
           status: 'open',
           winner_wallet: null,
-          claimed_at: null,
         })
         .eq('id', bountyId);
 
@@ -183,11 +185,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 8: Update bounty with transaction signature
+    // Step 9: Update bounty with transaction signature
     await supabase
       .from('bounties')
       .update({
-        transaction_signature: transferResult.signature,
+        txn_signature: transferResult.signature,
       })
       .eq('id', bountyId);
 
@@ -206,7 +208,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Bounty claimed successfully!',
         signature: transferResult.signature,
-        amount: bounty.amount,
+        reward: bounty.reward_text,
       },
       { status: 200 }
     );

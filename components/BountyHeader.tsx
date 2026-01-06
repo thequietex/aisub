@@ -14,17 +14,9 @@ export function BountyHeader({ bounty }: BountyHeaderProps) {
 
       {/* Massive bounty display - inspired by solprice.now */}
       <div className="space-y-2">
-        <div className="text-8xl md:text-9xl font-bold tracking-tighter">
-          ${bounty.amount}
+        <div className="text-6xl md:text-8xl font-bold tracking-tight">
+          {bounty.reward_text}
         </div>
-        <div className="text-2xl md:text-3xl text-gray-400 tracking-wide">
-          USDC
-        </div>
-      </div>
-
-      {/* Subscription title */}
-      <div className="text-xl md:text-2xl text-gray-300 tracking-wide">
-        {bounty.title}
       </div>
 
       {/* Status indicator */}
