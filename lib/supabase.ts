@@ -33,16 +33,12 @@ export function getSupabaseClient() {
 export interface Bounty {
   id: string;
   created_at: string;
-  updated_at: string;
-  title: string;
-  amount: number;
-  status: 'open' | 'claimed' | 'expired';
+  status: 'open' | 'claimed';
   riddle: string;
+  reward_text: string;
   answer_hash: string;
   winner_wallet: string | null;
-  claimed_at: string | null;
-  transaction_signature: string | null;
-  expires_at: string | null;
+  txn_signature: string | null;
 }
 
 export interface BountyAttempt {
