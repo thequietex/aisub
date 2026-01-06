@@ -12,7 +12,7 @@ export async function hashAnswer(answer: string): Promise<string> {
   const data = encoder.encode(normalized);
 
   // Hash the data
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data as BufferSource);
 
   // Convert ArrayBuffer to hex string
   const hashArray = Array.from(new Uint8Array(hashBuffer));
